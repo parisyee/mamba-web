@@ -1,51 +1,44 @@
-'use client';
-
 import Account from "./account";
 
-const accounts = [
-  {
-    id: 1,
-    name: "ATL",
-    total: 100000,
-    lineItems: [
-      {
-        id: 1,
-        name: "Writer fee",
-        quantity: 1,
-        multiplier: 1,
-        units: "allow",
-        cost: 10000000,
-        position: 1
-      },
-      {
-        id: 2,
-        name: "Director fee",
-        quantity: 1,
-        multiplier: 1,
-        units: "allow",
-        cost: 50000000,
-        position: 2
-      },
-      {
-        id: 3,
-        name: "Producer fee",
-        quantity: 1,
-        multiplier: 1,
-        units: "allow",
-        cost: 100000000,
-        position: 3
+
+const BUDGET_QUERY = `
+  query getBudget($id: ID!) {
+    budget(id: $id) {
+      id
+      name
+      total
+      accounts {
+        id
+        name
+        total
+        lineItems {
+          id
+          name
+          quantity
+          multiplier
+          units
+          cost
+          position
+        }
       }
-    ]
+    }
   }
-]
-export default function BudgetPage(
-  { params }: {
-    params: { id: string }
-  }) {
+`;
+
+export default async function BudgetPage({ params }: { id: string }) {
+  const res = await fetch('http://localhost:3000/api/graphql', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ query: BUDGET_QUERY, variables: {id: params.id } }),
+  });
+  const json = await res.json();
+  const budget = json.data.budget;
+  console.log("BUDGET: ", budget)
+
   return (
     <div>
-      <h1 className="text-4xl py-4">{`BUDGET ${params.id}`}</h1>
-      {accounts.map((account) => {
+      <h1 className="text-4xl py-4">{`BUDGET ${budget.name}`}</h1>
+      {budget.accounts.map((account) => {
         return (
           <Account key={account.id} account={account} />
         );
