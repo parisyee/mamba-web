@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "LineItem" ADD COLUMN     "multiplier" DOUBLE PRECISION NOT NULL DEFAULT 1,
+ALTER COLUMN "amount" SET DEFAULT 1;

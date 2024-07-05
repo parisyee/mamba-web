@@ -44,7 +44,7 @@ export default function Account({ account }) {
     <div className="bg-slate-100 shadow-md rounded space-y-4">
       <div className="flex justify-between text-xl font-semibold px-4 py-4 border-b border-slate-800">
         <div>{account.name}</div>
-        <div>${parseFloat(account.total/100.0)}</div>
+        <div>${account.total/100.0}</div>
       </div>
       <table className="container mx-auto table-auto">
         <thead>

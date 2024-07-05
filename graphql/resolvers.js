@@ -1,57 +1,125 @@
-const accounts = [
-  {
-    id: 1,
-    name: "ATL",
-    total: 100000,
-    lineItems: [
-      {
-        id: 1,
-        name: "Writer fee",
-        quantity: 1,
-        multiplier: 1,
-        units: "allow",
-        cost: 10000000,
-        position: 1
-      },
-      {
-        id: 2,
-        name: "Director fee",
-        quantity: 1,
-        multiplier: 1,
-        units: "allow",
-        cost: 50000000,
-        position: 2
-      },
-      {
-        id: 3,
-        name: "Producer fee",
-        quantity: 1,
-        multiplier: 1,
-        units: "allow",
-        cost: 100000000,
-        position: 3
-      }
-    ]
-  }
-]
+import { PrismaClient } from '@prisma/client'
 
-const budgets = [
-  {
-    id: 1,
-    name: "Budget 1",
-    total: 100000,
-    accounts: accounts
-  }
-];
+const prisma = new PrismaClient()
 
 export const resolvers = {
   Query: {
-    account: (parent, args) => {
-      return accounts.find(account => account.id === parseInt(args.id));
+    account: async (parent, args) => {
+      return await prisma.account.findUnique({
+        where: {
+          id: parseInt(args.id),
+        },
+      })
     },
-    accounts: () => accounts,
-    budget: (parent, args) => {
-      return budgets.find(budget => budget.id === parseInt(args.id));
-    }
+    accounts: async () => {
+      return await prisma.account.findMany()
+    },
+    budget: async (parent, args) => {
+      return await prisma.budget.findUnique({
+        where: {
+          id: parseInt(args.id),
+        },
+        include: {
+          categories: true,
+        },
+      })
+    },
+    budgets: async () => {
+      return await prisma.budget.findMany()
+    },
+    category: async (parent, args) => {
+      return await prisma.category.findUnique({
+        where: {
+          id: parseInt(args.id),
+        },
+      })
+    },
+    categories: async () => {
+      return await prisma.category.findMany()
+    },
+  },
+  Mutation: {
+    createAccount: async (parent, args) => {
+      return await prisma.account.create({
+        data: {
+          name: args.name,
+          categoryId: parseInt(args.categoryId),
+        },
+      })
+    },
+    createBudget: async (parent, args) => {
+      return await prisma.budget.create({
+        data: {
+          name: args.name,
+        },
+      })
+    },
+    createCategory: async (parent, args) => {
+      return await prisma.category.create({
+        data: {
+          name: args.name,
+          total: args.total,
+          budgetId: parseInt(args.budgetId),
+        },
+      })
+    },
+    createLineItem: async (parent, args) => {
+      return await prisma.lineItem.create({
+        data: {
+          description: args.description,
+          quantity: args.quantity,
+          multiplier: args.multiplier,
+          units: args.units,
+          rate: args.rate,
+          accountId: parseInt(args.accountId),
+        },
+      })
+    },
+    updateAccount: async (parent, args) => {
+      return await prisma.account.update({
+        where: {
+          id: parseInt(args.id),
+        },
+        data: {
+          name: args.name,
+          categoryId: parseInt(args.categoryId),
+        },
+      })
+    },
+    updateBudget: async (parent, args) => {
+      return await prisma.budget.update({
+        where: {
+          id: parseInt(args.id),
+        },
+        data: {
+          name: args.name,
+        },
+      })
+    },
+    updateCategory: async (parent, args) => {
+      return await prisma.category.update({
+        where: {
+          id: parseInt(args.id),
+        },
+        data: {
+          name: args.name,
+          total: args.total,
+        },
+      })
+    },
+    updateLineItem: async (parent, args) => {
+      return await prisma.lineItem.update({
+        where: {
+          id: parseInt(args.id),
+        },
+        data: {
+          description: args.description,
+          quantity: args.quantity,
+          multiplier: args.multiplier,
+          units: args.units,
+          rate: args.rate,
+        },
+      })
+    },
   }
 };

@@ -1,5 +1,8 @@
-import Account from "./account";
+'use client'
 
+import BudgetDetails from "./details";
+import BudgetCategories from "./categories";
+import Category from "./category";
 
 const BUDGET_QUERY = `
   query getBudget($id: ID!) {
@@ -7,19 +10,10 @@ const BUDGET_QUERY = `
       id
       name
       total
-      accounts {
+      categories {
         id
         name
         total
-        lineItems {
-          id
-          name
-          quantity
-          multiplier
-          units
-          cost
-          position
-        }
       }
     }
   }
@@ -32,17 +26,25 @@ export default async function BudgetPage({ params }: { id: string }) {
     body: JSON.stringify({ query: BUDGET_QUERY, variables: {id: params.id } }),
   });
   const json = await res.json();
+  const errors = json.errors;
   const budget = json.data.budget;
-  console.log("BUDGET: ", budget)
 
-  return (
-    <div>
-      <h1 className="text-4xl py-4">{`BUDGET ${budget.name}`}</h1>
-      {budget.accounts.map((account) => {
-        return (
-          <Account key={account.id} account={account} />
-        );
-      })}
-    </div>
-  );
+  if (errors) {
+    return (
+      <div>
+        <h1>Error</h1>
+        <pre>{JSON.stringify(errors, null, 2)}</pre>
+      </div>
+    )
+  } else if (!budget) {
+    return <div>Not found</div>;
+  } else {
+    return (
+      <div>
+        <h1 className="text-4xl py-4">{budget.name}</h1>
+        <BudgetDetails budget={budget} />
+        <BudgetCategories budget={budget} />
+      </div>
+    )
+  }
 };
