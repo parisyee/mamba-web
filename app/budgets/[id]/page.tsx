@@ -1,8 +1,7 @@
 'use client'
 
 import BudgetDetails from "./details";
-import BudgetCategories from "./categories";
-import Category from "./category";
+import CategoriesList from "./categories_list";
 
 const BUDGET_QUERY = `
   query getBudget($id: ID!) {
@@ -43,7 +42,7 @@ export default async function BudgetPage({ params }: { id: string }) {
       <div>
         <h1 className="text-4xl py-4">{budget.name}</h1>
         <BudgetDetails budget={budget} />
-        <BudgetCategories budget={budget} />
+        <CategoriesList categories={budget.categories} />
       </div>
     )
   }

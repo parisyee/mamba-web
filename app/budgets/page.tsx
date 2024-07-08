@@ -1,5 +1,6 @@
+import AddIcon from '@mui/icons-material/Add';
 import BudgetsList from "./budgets_list";
-import { AppBar, Button } from "@mui/material";
+import { Button } from "@mui/material";
 import Link from "next/link";
 
 export default async function Page() {
@@ -13,12 +14,16 @@ export default async function Page() {
 
     return (
         <div>
-            <AppBar position="static">
+            <div className="flex justify-end">
                 <Link href="/budgets/new">
-                    <Button color="inherit">Create Budget</Button>
+                    <Button variant="outlined" startIcon={<AddIcon />}>
+                        Create Budget
+                    </Button>
                 </Link>
-            </AppBar>
-            <BudgetsList budgets={budgets} />
+            </div>
+            <div>
+                <BudgetsList budgets={budgets} />
+            </div>
         </div>
     );
 };
