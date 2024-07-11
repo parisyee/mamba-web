@@ -1,3 +1,5 @@
+import Budget from '@/lib/types/budget';
+
 import AddIcon from '@mui/icons-material/Add';
 import BudgetsList from "./budgets_list";
 import { Button } from "@mui/material";
@@ -10,7 +12,7 @@ export default async function Page() {
         body: JSON.stringify({ query: '{ budgets { id name total } }' }),
     });
     const json = await res.json();
-    const budgets = json.data.budgets;
+    const budgets: Budget = json.data.budgets;
 
     return (
         <div>

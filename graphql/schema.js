@@ -21,7 +21,7 @@ export const typeDefs = gql`
     name: String!
     total: Int!
     categoryId: ID!
-    lineItems: [LineItem!]!
+    lineItems: [LineItem]
   }
 
   type LineItem {
@@ -36,11 +36,11 @@ export const typeDefs = gql`
 
   type Query {
     account(id: ID!): Account
-    accounts: [Account!]!
+    categoryAccounts(categoryId: ID!): [Account!]!
     budget(id: ID!): Budget
     budgets: [Budget!]!
     category(id: ID!): Category
-    categories: [Category!]!
+    budgetCategories(budgetId: ID!): [Category!]!
   }
 
   type Mutation {
@@ -48,6 +48,10 @@ export const typeDefs = gql`
     createBudget(name: String!): Budget!
     createCategory(name: String!, total: Int!, budgetId: ID!): Category!
     createLineItem(description: String, quantity: Int, multiplier: Int, units: String, rate: Int, accountId: ID!): LineItem!
+    destroyAccount(id: ID!): Account!
+    destroyBudget(id: ID!): Budget!
+    destroyCategory(id: ID!): Category!
+    destroyLineItem(id: ID!): LineItem!
     updateAccount(id: ID!, name: String, categoryId: ID): Account!
     updateBudget(id: ID!, name: String): Budget!
     updateCategory(id: ID!, name: String, total: Int): Category!

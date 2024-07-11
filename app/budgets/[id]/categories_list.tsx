@@ -1,39 +1,76 @@
-import Box from '@mui/material/Box';
-import List from '@mui/material/List';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemText from '@mui/material/ListItemText';
-import Divider from '@mui/material/Divider';
+'use client'
 
 import { useState, MouseEvent } from 'react';
 
-export default function CategoriesList({ categories }) {
-  const [selectedIndex, setSelectedIndex] = useState(1);
+import Category from '@/lib/types/category';
+
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemText from '@mui/material/ListItemText';
+import Divider from '@mui/material/Divider';
+import ListSubheader from '@mui/material/ListSubheader';
+import IconButton from '@mui/material/IconButton';
+import DeleteIcon from '@mui/icons-material/Delete';
+import Button from '@mui/material/Button';
+
+
+export default function CategoriesList({
+  categories,
+  onSelectCategory,
+  onAddCategory,
+  onDeleteCategory,
+}: {
+  categories: Category[],
+  onSelectCategory: (category: Category) => void,
+  onAddCategory: () => void,
+  onDeleteCategory: (id: string) => void,
+}) {
+  const [selectedIndex, setSelectedIndex] = useState(0);
 
   const handleListItemClick = (
     event: MouseEvent<HTMLDivElement, MouseEvent>,
     index: number,
   ) => {
     setSelectedIndex(index);
+    onSelectCategory(categories[index]);
   };
 
   return (
-    <Box sx={{ width: '30%', maxWidth: 360, bgcolor: 'background.paper' }}>
-      <List component="nav" aria-label="">
-        {categories.map((category) => {
+    <div>
+      <List
+        component="nav"
+        aria-label=""
+        subheader={
+          <ListSubheader component="div" id="nested-list-subheader">
+            Budget Categories
+          </ListSubheader>
+        }
+      >
+        {categories.map((category, i) => {
           return (
-            <>
-              <ListItemButton
-                key={category.id}
-                selected={selectedIndex === category.id}
-                onClick={(event) => handleListItemClick(event, category.id)}
+            <div key={category.id}>
+              <ListItem
+                secondaryAction={
+                  <IconButton
+                    edge="end"
+                    aria-label="delete"
+                    onClick={() => onDeleteCategory(category.id)}
+                  >
+                    <DeleteIcon />
+                  </IconButton>
+                }
               >
-                <ListItemText primary={category.name} />
-              </ListItemButton>
+                <ListItemText
+                  onClick={(event) => handleListItemClick(event, i)}
+                  primary={category.name}
+                />
+              </ListItem>
               <Divider />
-            </>
+            </div>
           );
         })}
       </List>
-    </Box>
+      <Button onClick={onAddCategory}>Add Category</Button>
+    </div>
   );
 }

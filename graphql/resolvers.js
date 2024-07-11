@@ -1,3 +1,4 @@
+import { destroyCategory } from '@/lib/api_clients/categories_client';
 import { PrismaClient } from '@prisma/client'
 
 const prisma = new PrismaClient()
@@ -11,8 +12,15 @@ export const resolvers = {
         },
       })
     },
-    accounts: async () => {
-      return await prisma.account.findMany()
+    categoryAccounts: async (parent, args) => {
+      return await prisma.account.findMany({
+        where: {
+          categoryId: parseInt(args.categoryId),
+        },
+        include: {
+          lineItems: true,
+        },
+      })
     },
     budget: async (parent, args) => {
       return await prisma.budget.findUnique({
@@ -34,9 +42,16 @@ export const resolvers = {
         },
       })
     },
-    categories: async () => {
-      return await prisma.category.findMany()
-    },
+    budgetCategories: async (parent, args) => {
+      return await prisma.category.findMany({
+        where: {
+          budgetId: parseInt(args.budgetId),
+        },
+        include: {
+          accounts: true,
+        },
+      })
+    }
   },
   Mutation: {
     createAccount: async (parent, args) => {
@@ -72,6 +87,34 @@ export const resolvers = {
           units: args.units,
           rate: args.rate,
           accountId: parseInt(args.accountId),
+        },
+      })
+    },
+    destroyAccount: async (parent, args) => {
+      return await prisma.account.delete({
+        where: {
+          id: parseInt(args.id),
+        },
+      })
+    },
+    destroyBudget: async (parent, args) => {
+      return await prisma.budget.delete({
+        where: {
+          id: parseInt(args.id),
+        },
+      })
+    },
+    destroyCategory: async (parent, args) => {
+      return await prisma.category.delete({
+        where: {
+          id: parseInt(args.id),
+        },
+      })
+    },
+    destroyLineItem: async (parent, args) => {
+      return await prisma.lineItem.delete({
+        where: {
+          id: parseInt(args.id),
         },
       })
     },

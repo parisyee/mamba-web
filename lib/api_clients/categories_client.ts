@@ -15,6 +15,7 @@ export async function getCategories() {
   });
   return res.data.categories;
 }
+
 export async function getCategory(id) {
   const res = await client.query({
     query: gql`
@@ -32,7 +33,6 @@ export async function getCategory(id) {
 }
 
 export async function createCategory(category) {
-  console.log('CATEGORY: ', category);
   const res = await client.mutate({
     mutation: gql`
         mutation CreateCategory($name: String!, $total: Int!, $budgetId: ID!) {
@@ -46,6 +46,20 @@ export async function createCategory(category) {
     variables: category
   });
   return res.data.createCategory;
+}
+
+export async function destroyCategory(id) {
+  const res = await client.mutate({
+    mutation: gql`
+        mutation DestroyCategory($id: ID!) {
+          destroyCategory(id: $id) {
+            id
+          }
+        }
+      `,
+    variables: { id }
+  });
+  return res.data.destroyCategory;
 }
 
 export async function updateCategory(category) {

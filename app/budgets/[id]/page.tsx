@@ -1,7 +1,6 @@
-'use client'
+import Budget from '@/lib/types/budget';
 
-import BudgetDetails from "./details";
-import CategoriesList from "./categories_list";
+import BudgetBuilder from './builder';
 
 const BUDGET_QUERY = `
   query getBudget($id: ID!) {
@@ -22,11 +21,12 @@ export default async function BudgetPage({ params }: { id: string }) {
   const res = await fetch('http://localhost:3000/api/graphql', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ query: BUDGET_QUERY, variables: {id: params.id } }),
+    body: JSON.stringify({ query: BUDGET_QUERY, variables: { id: params.id } }),
   });
   const json = await res.json();
+
   const errors = json.errors;
-  const budget = json.data.budget;
+  const budget: Budget = json.data.budget;
 
   if (errors) {
     return (
@@ -39,11 +39,7 @@ export default async function BudgetPage({ params }: { id: string }) {
     return <div>Not found</div>;
   } else {
     return (
-      <div>
-        <h1 className="text-4xl py-4">{budget.name}</h1>
-        <BudgetDetails budget={budget} />
-        <CategoriesList categories={budget.categories} />
-      </div>
+      <BudgetBuilder budget={budget} />
     )
   }
 };
